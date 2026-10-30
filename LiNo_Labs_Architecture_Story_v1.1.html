@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Perjalanan gagasan, visi, produk, dan arsitektur LiNo Labs — AI-native Personal Life Management Platform.">
+<title>LiNo Labs — Dari Ide Menjadi Arsitektur</title>
+<style>
+:root{
+  --navy-950:#061426;--navy-900:#081a30;--navy-850:#0b213b;--navy-800:#102a49;
+  --blue:#1684ff;--blue-2:#35b8ff;--violet:#8457ff;--cyan:#25d5e7;
+  --ink:#13233d;--muted:#657894;--line:#dce7f5;--paper:#f4f8fd;--white:#fff;
+  --green:#0ca77b;--amber:#c88719;--shadow:0 14px 40px rgba(18,48,86,.09);
+  --sidebar:248px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{margin:0;background:var(--navy-950);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);line-height:1.6}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:linear-gradient(180deg,#07182c,#061326 72%,#071b31);color:#d7e7ff;border-right:1px solid rgba(147,190,255,.13);z-index:30;display:flex;flex-direction:column;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:21px 19px 18px;border-bottom:1px solid rgba(147,190,255,.12);position:sticky;top:0;background:rgba(7,24,44,.96);backdrop-filter:blur(12px);z-index:2}
+.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#1e9cff,#6158ff);display:grid;place-items:center;color:white;font-weight:900;box-shadow:0 5px 20px #167aff55;font-size:17px}
+.brand-name{font-size:18px;font-weight:800;letter-spacing:-.5px;color:#fff}.brand-sub{font-size:9px;letter-spacing:1.6px;color:#82a8d5;text-transform:uppercase;margin-top:-3px}
+.nav-label{padding:19px 19px 7px;color:#6685aa;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.nav{padding:0 10px 18px;display:grid;gap:3px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:#b8cbe3;font-size:11px;transition:.2s;border:1px solid transparent;min-height:34px}
+.nav a:hover{background:rgba(75,142,226,.12);color:white}.nav a.active{background:linear-gradient(90deg,rgba(28,127,255,.27),rgba(50,87,190,.12));border-color:rgba(89,159,255,.23);color:#fff;box-shadow:inset 2px 0 #2c9bff}
+.nav-num{font-size:9px;color:#7393bb;min-width:18px;font-variant-numeric:tabular-nums}.nav a.active .nav-num{color:#8dc7ff}
+.sidebar-bottom{margin:auto 12px 14px;padding:13px;border-radius:13px;background:linear-gradient(135deg,rgba(21,121,224,.22),rgba(96,77,214,.16));border:1px solid rgba(115,175,255,.18)}
+.sidebar-bottom strong{display:block;color:#fff;font-size:11px}.sidebar-bottom span{display:block;color:#8daed5;font-size:9px;margin-top:3px}
+.main{margin-left:var(--sidebar);min-height:100vh;background:var(--paper)}
+.topbar{height:58px;position:sticky;top:0;z-index:20;background:rgba(7,25,46,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(142,185,239,.13);display:flex;align-items:center;justify-content:space-between;padding:0 28px;color:#d9eaff}
+.crumb{font-size:11px;color:#91afd2}.crumb b{color:white;font-weight:700}
+.top-actions{display:flex;align-items:center;gap:10px}.search-wrap{position:relative}.search-wrap input{width:230px;border:1px solid rgba(130,177,238,.2);background:#122d4d;color:#fff;border-radius:20px;padding:8px 13px 8px 34px;font-size:10px;outline:none}.search-wrap input:focus{border-color:#399aff;box-shadow:0 0 0 3px #1684ff20}.search-wrap input::placeholder{color:#83a2c8}.search-icon{position:absolute;left:12px;top:7px;color:#8eb8e8;font-size:13px}.top-pill{font-size:9px;color:#9bb7d9;border:1px solid rgba(130,177,238,.2);padding:6px 10px;border-radius:20px}
+.mobile-menu{display:none;border:1px solid #244362;background:#112b49;color:#fff;border-radius:8px;padding:6px 9px}
+.hero{position:relative;overflow:hidden;min-height:350px;background:radial-gradient(ellipse at 75% 48%,#135da2 0%,transparent 35%),radial-gradient(ellipse at 45% 100%,#143f6b 0%,transparent 44%),linear-gradient(115deg,#07182d 0%,#0a2442 55%,#0b3158 100%);color:white;padding:43px clamp(26px,4vw,58px) 34px;display:grid;grid-template-columns:minmax(320px,1fr) minmax(340px,.95fr);align-items:center;gap:20px}
+.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(103,171,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(103,171,255,.045) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(90deg,transparent,#000 55%,#000)}
+.hero:after{content:"";position:absolute;width:480px;height:180px;right:5%;bottom:-115px;border-radius:50%;background:#168bff55;filter:blur(55px)}
+.hero-copy,.orbit-wrap{position:relative;z-index:1}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#80caff;font-weight:800}.hero h1{font-size:clamp(31px,4vw,49px);line-height:1.08;letter-spacing:-1.8px;margin:12px 0 14px;max-width:620px}.hero h1 span{background:linear-gradient(90deg,#fff,#83c9ff 60%,#b5a4ff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:570px;color:#b8cce5;font-size:12px;line-height:1.8;margin:0 0 22px}.hero-buttons{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:24px;font-size:10px;font-weight:800;border:1px solid transparent;transition:.2s}.btn-primary{background:linear-gradient(90deg,#087cff,#3977ff);color:white;box-shadow:0 8px 24px #087cff45}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px #087cff60}.btn-ghost{border-color:#5b82aa;color:#e4f2ff;background:#0a2340aa}.btn-ghost:hover{background:#17395e}
+.orbit-wrap{min-height:250px;display:grid;place-items:center}.orbit{width:min(320px,70vw);aspect-ratio:1;position:relative;display:grid;place-items:center}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid rgba(90,183,255,.42);border-radius:50%;inset:7%;box-shadow:0 0 35px #1684ff1c,inset 0 0 35px #1684ff12}.orbit:after{inset:20%;border-color:rgba(126,156,255,.5);transform:rotate(55deg) scaleX(1.2)}.orbit-ring{position:absolute;inset:0;border:1px dashed rgba(116,186,255,.28);border-radius:50%;animation:spin 55s linear infinite}.orbit-core{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 35% 25%,#38c4ff,#1559bd 55%,#111f70);border:2px solid #7bd8ff;box-shadow:0 0 0 10px #1684ff19,0 0 45px #1684ff99;color:white;font-size:26px;font-weight:900;letter-spacing:-1px}.orbit-core small{display:block;font-size:8px;letter-spacing:2px;color:#c8e9ff;font-weight:700;margin-top:-27px}.orbit-node{position:absolute;width:54px;height:54px;border-radius:17px;background:linear-gradient(145deg,#164c83,#0c2c51);border:1px solid rgba(119,201,255,.55);box-shadow:0 7px 20px #0005;display:grid;place-items:center;text-align:center;color:#dff3ff;font-size:18px}.orbit-node small{display:block;font-size:7px;line-height:1.1;color:#a9c9ed;margin-top:-8px}.n1{top:0;left:calc(50% - 27px)}.n2{top:14%;right:5%}.n3{top:43%;right:-2%}.n4{bottom:10%;right:13%}.n5{bottom:0;left:calc(50% - 27px)}.n6{bottom:12%;left:8%}.n7{top:43%;left:-2%}.n8{top:13%;left:5%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.journey-strip{background:#0a2039;color:#e5f2ff;padding:17px clamp(24px,4vw,58px) 20px;display:grid;grid-template-columns:minmax(0,2.1fr) minmax(220px,.9fr);gap:14px;border-top:1px solid #ffffff12;border-bottom:1px solid #ffffff12}.journey-card,.quote-card{border:1px solid rgba(115,174,239,.2);border-radius:12px;padding:13px 15px;background:linear-gradient(145deg,#102b49,#0b2039)}.journey-card h3{font-size:11px;margin:0 0 12px;color:#fff}.journey-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.step{position:relative;min-width:0}.step:not(:last-child):after{content:"";position:absolute;top:15px;left:36px;right:-7px;border-top:1px solid #2e83cf;z-index:0}.step-icon{position:relative;z-index:1;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#398ce6,#3449a6);border:1px solid #85c8ff;color:white;font-size:13px;margin-bottom:7px}.step b{display:block;font-size:9px;color:#fff}.step span{display:block;color:#91afd1;font-size:8px;line-height:1.4;margin-top:3px}.quote-card{display:flex;align-items:center;gap:10px;color:#c8dcf5;font-size:11px;line-height:1.7}.quote-mark{font-size:36px;color:#58aaff;font-family:Georgia;line-height:1}.quote-card small{display:block;color:#6f9bc8;font-size:9px;margin-top:5px}
+.content-shell{padding:22px clamp(18px,3vw,48px) 42px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}.content{min-width:0}.section{scroll-margin-top:80px;background:#fff;border:1px solid #e2ebf6;border-radius:14px;padding:25px;margin-bottom:15px;box-shadow:0 5px 20px rgba(17,57,99,.035)}.section-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:16px}.section-no{width:35px;height:35px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;background:linear-gradient(135deg,#e2f2ff,#dce4ff);color:#1668ca;font-size:11px;font-weight:900}.section h2{font-size:19px;line-height:1.25;letter-spacing:-.4px;margin:0;color:#102342}.section-kicker{font-size:9px;color:#4383c6;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:3px}.section-intro{font-size:11px;color:#627690;margin:4px 0 0;max-width:850px}.section p{font-size:11px;color:#536782;line-height:1.85;margin:8px 0}.section h3{font-size:13px;color:#183456;margin:19px 0 8px}.section h4{font-size:11px;color:#183456;margin:0 0 6px}.muted{color:#6e819a}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.info-card{border:1px solid #e0eaf6;border-radius:11px;padding:13px;background:linear-gradient(145deg,#fff,#f6f9fe);min-width:0}.info-card p{font-size:10px;margin:5px 0 0}.card-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}.card-icon{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:#e7f2ff;color:#1674e7;font-size:15px;flex:0 0 auto}.card-icon.purple{background:#f0eaff;color:#7752df}.card-icon.teal{background:#e2fbf7;color:#0b9e8a}.card-icon.orange{background:#fff3df;color:#bc7a12}.callout{margin:13px 0;border-radius:11px;padding:13px 15px;background:linear-gradient(95deg,#13bce5,#5a68ed 65%,#8754ed);color:white;display:flex;gap:12px;align-items:center}.callout .big{font-size:21px}.callout strong{display:block;font-size:11px}.callout span{font-size:9px;opacity:.9;display:block;margin-top:2px}.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.tag{font-size:9px;padding:5px 9px;border-radius:20px;background:#edf5ff;color:#2866a7;border:1px solid #d8eaff}.tag.green{background:#e8f8f1;color:#12845f;border-color:#c9efdf}.tag.amber{background:#fff6e7;color:#a36a0e;border-color:#f5e3bd}.tag.purple{background:#f2edff;color:#6f51c8;border-color:#e4dbff}
+.pillar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pillar{border:1px solid #e1eaf5;border-radius:9px;padding:10px 9px;background:#fbfdff;display:flex;align-items:center;gap:8px;min-height:54px}.pillar-num{width:22px;height:22px;border-radius:7px;background:#e8f2ff;color:#2674c8;display:grid;place-items:center;font-size:9px;font-weight:900;flex:0 0 auto}.pillar span:last-child{font-size:9px;font-weight:700;color:#35516f;line-height:1.35}
+.diagram{border:1px solid #d7e7f8;border-radius:12px;padding:14px;background:linear-gradient(145deg,#f7fbff,#edf5ff);overflow:hidden}.diagram-title{font-size:10px;font-weight:900;color:#28527f;margin-bottom:10px}.layer{display:grid;grid-template-columns:95px 1fr;gap:8px;align-items:stretch;margin:7px 0}.layer-label{border-radius:8px;background:#1c69bd;color:white;display:grid;place-items:center;text-align:center;font-size:9px;font-weight:800;padding:8px}.layer-content{display:flex;flex-wrap:wrap;gap:6px}.node{flex:1 1 105px;min-width:0;border:1px solid #b9d7f6;border-radius:8px;background:white;padding:8px 9px;text-align:center;color:#28517b;font-size:9px;font-weight:800;box-shadow:0 2px 5px #1e5a9410}.node small{display:block;color:#7890ac;font-size:8px;font-weight:500;margin-top:2px}.node.core{background:linear-gradient(135deg,#0d588e,#176f8b);border-color:#2b8eac;color:#fff}.node.core small{color:#bde8f0}.node.violet{background:#f2efff;border-color:#d8ceff;color:#6847bd}.node.green{background:#e8f8f2;border-color:#c2ebdb;color:#13815f}.flow-arrow{text-align:center;color:#64a3df;font-size:13px;line-height:1.1}.timeline{position:relative;padding-left:21px}.timeline:before{content:"";position:absolute;left:6px;top:6px;bottom:10px;width:2px;background:linear-gradient(#2d9cff,#8b6aff,#d6e6f7)}.timeline-item{position:relative;padding:0 0 16px 13px}.timeline-item:before{content:"";position:absolute;left:-20px;top:5px;width:10px;height:10px;border-radius:50%;background:#2588ed;border:3px solid #e5f2ff;box-shadow:0 0 0 1px #8ec5ff}.timeline-item b{font-size:10px;color:#1c3c60}.timeline-item p{margin:3px 0 0;font-size:10px}.architecture-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.architecture-item{display:flex;gap:9px;border:1px solid #e3ecf7;border-radius:9px;padding:10px}.architecture-item .mini{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:#eaf3ff;color:#2478ce;flex:0 0 auto}.architecture-item b{font-size:10px;color:#244568;display:block}.architecture-item span{font-size:9px;color:#74869d;display:block;line-height:1.5;margin-top:2px}
+.status-row{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}.status{display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:800;padding:4px 7px;border-radius:20px}.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.status.existing{background:#e8f8f1;color:#13845e}.status.blueprint{background:#edf3ff;color:#356fd0}.status.plan{background:#fff5e4;color:#a36b11}.table-wrap{overflow-x:auto;border:1px solid #e1eaf5;border-radius:10px;margin:10px 0}.data-table{width:100%;border-collapse:collapse;min-width:490px}.data-table th,.data-table td{text-align:left;padding:9px 11px;border-bottom:1px solid #e9eff7;font-size:9px;vertical-align:top}.data-table th{background:#f3f8fe;color:#385a7e;font-weight:800}.data-table td{color:#5b7089}.data-table tr:last-child td{border-bottom:0}
+.right-rail{position:sticky;top:76px;display:grid;gap:12px}.rail-card{background:white;border:1px solid #e0eaf6;border-radius:13px;padding:15px;box-shadow:var(--shadow)}.rail-title{font-size:12px;font-weight:900;color:#183354;margin:0 0 12px;display:flex;align-items:center;gap:8px}.rail-title .card-icon{width:25px;height:25px}.chat-item{display:grid;grid-template-columns:26px 1fr;gap:8px;margin:12px 0}.chat-avatar{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#e7f1ff;color:#2677d3;font-size:11px}.chat-item b{font-size:9px;color:#284665;display:block}.chat-item p{font-size:9px;line-height:1.55;margin:2px 0;color:#71839a}.chat-time{font-size:8px;color:#9aabc0;float:right}.success-note{padding:9px;border-radius:8px;background:#e9f8f2;color:#198160;font-size:8px;line-height:1.5;margin-top:12px}.why-list{display:grid;gap:9px}.why{display:flex;gap:8px;align-items:flex-start}.why-icon{width:22px;height:22px;border-radius:7px;background:#f0edff;color:#7052d5;display:grid;place-items:center;flex:0 0 auto;font-size:11px}.why b{display:block;font-size:9px;color:#34516e}.why span{font-size:8px;color:#8392a7;display:block;line-height:1.4}.rail-link{display:block;text-align:center;background:#087aff;color:white;border-radius:8px;padding:8px;font-size:9px;font-weight:800;margin-top:12px}.footer{background:#071a30;color:#90a9c8;padding:17px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:9px}.footer strong{color:#e5f3ff}.footer-links{display:flex;gap:14px;flex-wrap:wrap}.footer a:hover{color:white}
+.search-results{display:none;position:absolute;right:0;top:42px;width:min(330px,85vw);background:white;color:#1a3554;border:1px solid #d9e7f6;border-radius:12px;box-shadow:0 16px 40px #001a3c35;padding:8px;z-index:50;max-height:330px;overflow:auto}.search-results.show{display:block}.search-results a{display:block;padding:8px;border-radius:7px;font-size:10px}.search-results a:hover{background:#edf5ff}.search-results small{display:block;color:#8495aa;font-size:8px}.empty-search{padding:10px;color:#8192a8;font-size:10px}
+@media(max-width:1100px){:root{--sidebar:220px}.content-shell{grid-template-columns:minmax(0,1fr) 260px}.pillar-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{grid-template-columns:1fr .8fr}}
+@media(max-width:850px){:root{--sidebar:0px}.sidebar{width:250px;transform:translateX(-102%);transition:transform .25s;box-shadow:15px 0 40px #0006}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.mobile-menu{display:block}.topbar{padding:0 16px}.crumb{display:none}.hero{grid-template-columns:1fr;padding:35px 24px 25px}.orbit-wrap{min-height:230px}.journey-strip{grid-template-columns:1fr}.content-shell{grid-template-columns:1fr;padding:16px}.right-rail{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.footer{flex-wrap:wrap}.brand{padding-top:16px}}
+@media(max-width:560px){.topbar{height:54px}.search-wrap input{width:170px}.top-pill{display:none}.hero h1{font-size:34px}.orbit{width:270px}.journey-steps{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.step b{font-size:8px}.step span{font-size:7px}.step:not(:last-child):after{left:30px}.content-shell{padding:11px}.section{padding:17px 14px}.section h2{font-size:17px}.grid-2,.grid-3,.architecture-list{grid-template-columns:1fr}.pillar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layer{grid-template-columns:75px 1fr}.node{flex-basis:90px}.right-rail{grid-template-columns:1fr}.footer{padding:15px}.footer-links{gap:9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ===== Application relationship chapter ===== */
+.app-relations-section{background:linear-gradient(145deg,#071a30 0%,#0a2340 55%,#0a1b34 100%);border:1px solid #153c63;color:#e9f4ff;box-shadow:0 16px 44px rgba(2,18,39,.18);overflow:hidden;position:relative}
+.app-relations-section:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 83% 8%,rgba(26,132,255,.17),transparent 36%),radial-gradient(ellipse at 8% 78%,rgba(116,75,255,.12),transparent 34%)}
+.app-relations-section>*{position:relative;z-index:1}
+.app-relations-section .section-no{background:linear-gradient(135deg,#168dff,#725bff);color:#fff;box-shadow:0 8px 22px #167fff40}
+.app-relations-section .section-kicker{color:#63caff}
+.app-relations-section h2,.app-relations-section h3,.app-relations-section h4{color:#f3f8ff}
+.app-relations-section .section-intro,.app-relations-section p{color:#a9c3df}
+.app-relations-section .section-head{margin-bottom:18px}
+.app-relationship-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:18px;align-items:center;padding:18px 20px;border:1px solid rgba(97,169,246,.25);border-radius:15px;background:linear-gradient(115deg,rgba(11,48,83,.96),rgba(16,39,77,.85));margin-bottom:15px}
+.app-relationship-hero .eyebrow{font-size:8px;letter-spacing:1.7px;color:#64caff;font-weight:900}
+.app-relationship-hero h3{font-size:19px;line-height:1.25;letter-spacing:-.45px;margin:7px 0;color:#fff;max-width:640px}
+.app-relationship-hero p{font-size:10px;line-height:1.75;margin:0;max-width:720px}
+.app-relationship-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.app-stat{border:1px solid rgba(115,184,255,.2);background:rgba(3,20,43,.45);border-radius:10px;padding:10px}
+.app-stat strong{display:block;color:#fff;font-size:19px;line-height:1.1}
+.app-stat span{display:block;color:#8eafd4;font-size:8px;margin-top:4px}
+.app-map{border:1px solid #176bb4;border-radius:14px;padding:15px;background:radial-gradient(ellipse at 50% 0%,rgba(17,107,190,.2),transparent 50%),linear-gradient(145deg,#06172b,#09213d 65%,#071a31);box-shadow:inset 0 0 34px rgba(20,112,205,.08);overflow:hidden}
+.app-map-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.app-map-head small{display:block;color:#65baff;font-size:8px;letter-spacing:1.5px;font-weight:900}
+.app-map-head strong{display:block;color:#f4f9ff;font-size:13px;margin-top:3px}
+.map-status{white-space:nowrap;border:1px solid rgba(87,194,160,.35);background:rgba(9,139,105,.13);color:#6fe0bc;border-radius:30px;padding:5px 9px;font-size:8px;font-weight:800}
+.app-flow-row{display:grid;grid-template-columns:minmax(48px,.58fr) 34px minmax(74px,1fr) 34px minmax(74px,1fr) 38px minmax(74px,1fr) 34px minmax(74px,1fr);gap:4px;align-items:center;min-width:0;padding:8px 2px 13px}
+.app-flow-scroll{overflow-x:auto;scrollbar-color:#2368a0 #0a1c32;scrollbar-width:thin}
+.app-node{position:relative;min-height:118px;padding:10px 6px 9px;border:1px solid rgba(92,163,236,.55);border-radius:13px;text-align:center;background:linear-gradient(155deg,#10365d,#0a2442);box-shadow:0 8px 22px rgba(0,0,0,.2);transition:transform .2s,border-color .2s,box-shadow .2s;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.app-node:hover{transform:translateY(-3px);border-color:#8bd6ff;box-shadow:0 12px 28px rgba(0,112,255,.2)}
+.app-node .app-node-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:19px;color:white;margin-bottom:8px;background:linear-gradient(145deg,#197bce,#244e9c);box-shadow:0 6px 18px #087bff35}
+.app-node strong{font-size:10px;line-height:1.25;color:#fff}
+.app-node small{font-size:8px;line-height:1.4;color:#a6c5e5;margin-top:4px}
+.app-node em{font-size:7px;line-height:1.4;color:#77caff;font-style:normal;margin-top:7px;padding:3px 6px;border-radius:20px;background:rgba(28,132,223,.14)}
+.app-node.identity{border-color:#9464ef;background:linear-gradient(155deg,#38266f,#17244d)}
+.app-node.identity .app-node-icon{background:linear-gradient(145deg,#b36aff,#6344c9)}
+.app-node.ai{border-color:#0e9bdb;background:linear-gradient(155deg,#0b4a77,#0c2d55)}
+.app-node.ai .app-node-icon{background:linear-gradient(145deg,#38c8ff,#0873d0)}
+.app-node.bridge{border-color:#20caa7;background:linear-gradient(155deg,#075e61,#0b344a)}
+.app-node.bridge .app-node-icon{background:linear-gradient(145deg,#35e0c1,#078c9d)}
+.app-node.mobile{border-color:#7268fa;background:linear-gradient(155deg,#302d80,#162958)}
+.app-node.mobile .app-node-icon{background:linear-gradient(145deg,#8b7cff,#4b4bd2)}
+.app-node.user{border-color:#468bc8;background:linear-gradient(155deg,#123b65,#0c2848)}
+.app-connector{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;color:#7fbbf2;min-width:0}
+.app-connector span{font-size:6px;line-height:1.3;color:#a8c9e9;max-width:58px;overflow-wrap:anywhere}
+.app-connector b{font-size:22px;line-height:1;color:#4caeff;text-shadow:0 0 14px #168bff80}
+.app-connector.route-sso b{color:#bd91ff;text-shadow:0 0 14px #8b55ff80}
+.app-connector.route-handoff b{color:#54e2c4;text-shadow:0 0 14px #00c99a80}
+.app-map[data-flow="sso"] .route-sso,.app-map[data-flow="ai-mobile"] .route-handoff,.app-map[data-flow="result"] .route-result{filter:drop-shadow(0 0 9px currentColor);transform:scale(1.04)}
+.app-map[data-flow="sso"] .app-node.identity,.app-map[data-flow="sso"] .app-node.ai,.app-map[data-flow="ai-mobile"] .app-node.ai,.app-map[data-flow="ai-mobile"] .app-node.bridge,.app-map[data-flow="ai-mobile"] .app-node.mobile{box-shadow:0 0 0 2px rgba(68,170,255,.24),0 0 25px rgba(31,139,255,.24)}
+.app-return-flow{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;border-top:1px dashed rgba(99,167,232,.3);padding:11px 5px 2px;color:#9fc1e2;font-size:8px}
+.app-return-flow b{color:#58dfc2;font-size:15px}
+.app-return-flow .return-chip{border:1px solid rgba(58,211,179,.35);background:rgba(10,127,104,.12);border-radius:30px;padding:5px 9px;color:#8debd5}
+.app-map-note{margin:12px 0 0;padding:9px 11px;border-radius:9px;background:rgba(27,112,188,.13);border:1px solid rgba(73,159,232,.22);color:#9fc3e6;font-size:8px;line-height:1.55}
+.app-map-note b{color:#d8edff}
+.backend-band{margin-top:15px;padding:13px;border:1px solid rgba(72,158,235,.4);border-radius:12px;background:rgba(4,24,46,.72)}
+.backend-heading{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.backend-cloud{width:31px;height:31px;border-radius:10px;background:linear-gradient(145deg,#398fff,#3445a8);display:grid;place-items:center;color:white;font-size:15px}
+.backend-heading strong{display:block;color:#fff;font-size:10px}
+.backend-heading small{display:block;color:#8eafd1;font-size:7px;margin-top:2px}
+.backend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.backend-service{border:1px solid rgba(86,159,227,.27);border-radius:9px;background:linear-gradient(145deg,#103253,#0a2340);padding:9px;min-height:65px}
+.backend-service b{display:block;color:#e5f3ff;font-size:8px}
+.backend-service span{display:block;color:#8eafd1;font-size:7px;line-height:1.5;margin-top:4px}
+.flow-switcher{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 9px}
+.flow-tab{border:1px solid rgba(106,171,235,.32);background:#0d2a49;color:#a9c9e9;border-radius:20px;padding:7px 11px;font-size:8px;font-weight:800;cursor:pointer;transition:.2s}
+.flow-tab:hover,.flow-tab[aria-pressed="true"]{background:linear-gradient(90deg,#087dce,#4b60dc);border-color:#62b8ff;color:white;box-shadow:0 5px 16px #087cff35}
+.flow-description{border:1px solid rgba(88,163,231,.28);border-radius:10px;padding:11px 13px;background:rgba(10,38,66,.78);color:#b2cbe4;font-size:9px;line-height:1.65;min-height:52px}
+.flow-description b{color:#fff}
+.app-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.app-detail-card{border:1px solid rgba(100,164,228,.25);border-radius:12px;padding:13px;background:linear-gradient(150deg,rgba(14,47,80,.92),rgba(9,31,55,.94));min-width:0}
+.app-detail-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.app-detail-icon{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,#238ce4,#364fae);color:#fff;font-size:13px;flex:0 0 auto}
+.app-detail-card:nth-child(2) .app-detail-icon{background:linear-gradient(145deg,#a765f5,#5a43bd)}
+.app-detail-card:nth-child(3) .app-detail-icon{background:linear-gradient(145deg,#20c7a5,#087b8d)}
+.app-detail-card h4{font-size:10px;margin:0}
+.app-detail-card p{font-size:8px;line-height:1.65;margin:0;color:#9bb8d7}
+.app-detail-card .mini-tag{display:inline-flex;margin-top:8px;border:1px solid rgba(97,172,238,.25);border-radius:20px;padding:3px 6px;color:#83c9ff;font-size:7px;font-weight:800}
+.app-process{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0}
+.app-process-step{position:relative;border:1px solid rgba(94,160,223,.24);border-radius:10px;padding:10px;background:rgba(8,33,59,.8);min-height:105px}
+.app-process-step .step-num{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#188bfa,#6255d8);color:#fff;font-size:9px;font-weight:900;margin-bottom:7px}
+.app-process-step b{display:block;color:#e7f4ff;font-size:8px;line-height:1.35}
+.app-process-step span{display:block;color:#91afd0;font-size:7px;line-height:1.55;margin-top:4px}
+.app-security-strip{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;border:1px solid rgba(45,207,169,.3);background:linear-gradient(90deg,rgba(8,111,103,.2),rgba(12,53,72,.55));border-radius:11px;padding:12px;margin-top:14px}
+.app-security-icon{width:30px;height:30px;border-radius:9px;background:linear-gradient(145deg,#20c99d,#087b89);display:grid;place-items:center;color:#fff;font-size:14px}
+.app-security-strip strong{display:block;color:#d8fff4;font-size:9px;margin-bottom:5px}
+.app-security-strip p{font-size:8px;line-height:1.65;margin:0;color:#9bd2c8}
+.app-security-points{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.app-security-points span{border:1px solid rgba(77,213,181,.23);border-radius:20px;padding:3px 7px;color:#a8e9d9;font-size:7px}
+.app-relations-section .status-row{margin-top:13px}
+.app-relations-section .status.blueprint{background:rgba(49,117,208,.2);color:#9ccaff}
+.app-relations-section .status.plan{background:rgba(185,127,27,.15);color:#f0c77e}
+@media(max-width:900px){.app-flow-row{min-width:720px}.app-relationship-hero{grid-template-columns:1fr}.app-relationship-stats{grid-template-columns:repeat(4,minmax(0,1fr))}.backend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.app-detail-grid{grid-template-columns:1fr}.app-process{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.app-relations-section{padding:17px 12px}.app-relationship-hero{padding:14px}.app-relationship-hero h3{font-size:16px}.app-relationship-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.app-map{padding:10px}.app-map-head{align-items:flex-start;flex-direction:column}.backend-grid{grid-template-columns:1fr 1fr}.app-process{grid-template-columns:1fr 1fr}.app-process-step{min-height:90px}.app-security-strip{grid-template-columns:1fr}.flow-tab{padding:7px 9px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#beranda" aria-label="LiNo Labs beranda"><span class="brand-mark">L</span><span><span class="brand-name">LiNo Labs</span><span class="brand-sub">AI-native life platform</span></span></a>
+  <div class="nav-label">Perjalanan & Dokumentasi</div>
+  <nav class="nav" id="mainNav">
+    <a class="active" href="#beranda"><span class="nav-num">⌂</span>Beranda</a>
+    <a href="#latar"><span class="nav-num">01.</span>Latar Belakang & Konsep</a>
+    <a href="#visi"><span class="nav-num">02.</span>Visi, Misi & Nilai</a>
+    <a href="#masalah"><span class="nav-num">03.</span>Masalah & Solusi</a>
+    <a href="#bisnis"><span class="nav-num">04.</span>Model Bisnis</a>
+    <a href="#ekosistem"><span class="nav-num">05.</span>Produk & Ekosistem</a>
+    <a href="#pilar"><span class="nav-num">06.</span>16 Pilar Kehidupan</a>
+    <a href="#dna"><span class="nav-num">07.</span>DNA Engine</a>
+    <a href="#arsitektur"><span class="nav-num">08.</span>Arsitektur Sistem</a>
+    <a href="#identity"><span class="nav-num">09.</span>LiNo Identity</a>
+    <a href="#gateway"><span class="nav-num">10.</span>LiNo Gateway</a>
+    <a href="#linodb"><span class="nav-num">11.</span>LiNoDB</a>
+    <a href="#workflow"><span class="nav-num">12.</span>Workflow Engine</a>
+    <a href="#realtime"><span class="nav-num">13.</span>LiNo Realtime</a>
+    <a href="#observability"><span class="nav-num">14.</span>Observability</a>
+    <a href="#notification"><span class="nav-num">15.</span>Notification</a>
+    <a href="#registry"><span class="nav-num">16.</span>Pillar Registry</a>
+    <a href="#platform"><span class="nav-num">17.</span>Kubernetes + Platform</a>
+    <a href="#security"><span class="nav-num">18.</span>Keamanan & Infrastruktur</a>
+    <a href="#app-relations"><span class="nav-num">19.</span>Hubungan Antar Aplikasi</a>
+    <a href="#bridge"><span class="nav-num">20.</span>LiNo App Bridge SDK</a>
+    <a href="#penutup"><span class="nav-num">21.</span>Kesimpulan & Arah</a>
+  </nav>
+  <div class="sidebar-bottom"><strong>◈ LiNo AI</strong><span>Your Life, Orchestrated by Intelligence</span></div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:10px"><button class="mobile-menu" id="menuToggle" aria-label="Buka navigasi">☰</button><div class="crumb">LiNo Labs <span style="color:#4f739a">/</span> <b>Digital Blueprint</b></div></div>
+  <div class="top-actions"><div class="search-wrap"><span class="search-icon">⌕</span><input id="siteSearch" type="search" placeholder="Cari di LiNo Labs…" autocomplete="off" aria-label="Cari dokumentasi"><div class="search-results" id="searchResults"></div></div><span class="top-pill">DOKUMENTASI STATIS · v1.1</span></div>
+</header>
+<section class="hero" id="beranda">
+  <div class="hero-copy">
+    <div class="eyebrow">Perjalanan gagasan dan rekayasa</div>
+    <h1>Dari Ide, Menjadi<br><span>Arsitektur Nyata</span></h1>
+    <p>Dokumentasi perjalanan LiNo Labs — dari pertanyaan mendasar tentang bagaimana teknologi dapat memahami kehidupan manusia, menuju visi AI-native Personal Life Management Platform, ekosistem produk, hingga rancangan arsitektur teknis dan LiNo App Bridge SDK.</p>
+    <div class="hero-buttons"><a class="btn btn-primary" href="#latar">Mulai Menjelajah <span>→</span></a><a class="btn btn-ghost" href="#ringkasan">◉ Lihat Ringkasan</a></div>
+  </div>
+  <div class="orbit-wrap" aria-label="Ilustrasi ekosistem pilar LiNo"><div class="orbit"><div class="orbit-ring"></div><div class="orbit-core">LiNo<small>DNA ENGINE</small></div><div class="orbit-node n1">⌂<small>Family</small></div><div class="orbit-node n2">▤<small>Finance</small></div><div class="orbit-node n3">✦<small>Education</small></div><div class="orbit-node n4">◎<small>Spiritual</small></div><div class="orbit-node n5">↗<small>Mobility</small></div><div class="orbit-node n6">◇<small>Community</small></div><div class="orbit-node n7">⇄<small>Economy</small></div><div class="orbit-node n8">▣<small>Collaboration</small></div></div></div>
+</section>
+<section class="journey-strip" id="ringkasan">
+  <div class="journey-card"><h3>Perjalanan Pengembangan LiNo</h3><div class="journey-steps">
+    <div class="step"><div class="step-icon">✧</div><b>1. Gagasan</b><span>Merumuskan kebutuhan hidup manusia</span></div>
+    <div class="step"><div class="step-icon">◇</div><b>2. Visi & Konsep</b><span>AI-native life management</span></div>
+    <div class="step"><div class="step-icon">▦</div><b>3. Ekosistem</b><span>Pilar dan produk saling terhubung</span></div>
+    <div class="step"><div class="step-icon">⌘</div><b>4. Arsitektur</b><span>Fondasi data, layanan dan runtime</span></div>
+    <div class="step"><div class="step-icon">↗</div><b>5. Integrasi</b><span>Pengalaman lintas aplikasi</span></div>
+  </div></div>
+  <div class="quote-card"><span class="quote-mark">“</span><div>LiNo bukan sekadar aplikasi atau chatbot. LiNo dibangun untuk memahami konteks, membantu merencanakan, dan mengoordinasikan kehidupan penggunanya.<small>Prinsip arah produk · LiNo Labs</small></div></div>
+</section>
+<div class="content-shell">
+<div class="content">
+<section class="section" id="latar">
+  <div class="section-head"><div class="section-no">01</div><div><div class="section-kicker">Awal perjalanan</div><h2>Latar Belakang & Konsep Dasar</h2><p class="section-intro">Berangkat dari satu pertanyaan: bagaimana teknologi dapat membantu manusia mengelola kehidupan secara utuh, bukan hanya menyelesaikan satu tugas?</p></div></div>
+  <div class="grid-2">
+    <article class="info-card"><div class="card-top"><span class="card-icon">⌕</span><h4>Latar Belakang</h4></div><p>Aktivitas kehidupan sehari-hari tersebar di banyak aplikasi: keluarga, keuangan, pendidikan, mobilitas, komunitas, dan aktivitas lainnya. Informasi terfragmentasi membuat pengguna harus menghubungkan sendiri konteks dan prioritasnya.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon purple">✧</span><h4>Konsep Dasar</h4></div><p>LiNo dirancang sebagai platform pengelolaan kehidupan personal yang menghubungkan data dan kemampuan dari berbagai pilar, lalu menggunakan AI untuk memahami konteks dan membantu pengguna mengambil langkah berikutnya.</p></article>
+  </div>
+  <div class="callout"><span class="big">◈</span><div><strong>Bukan sekadar super app yang ditempeli AI.</strong><span>DNA Engine adalah inti kecerdasan; pilar menjadi sumber data otoritatif, konteks, dan kapabilitas dengan persetujuan pengguna.</span></div></div>
+  <p>Nama LiNo merujuk pada gagasan <b>Life Now / Life In One</b>: membantu menyatukan berbagai konteks kehidupan dalam satu ekosistem yang saling memahami. Antarmuka chat dapat menjadi salah satu cara berinteraksi, tetapi bukan definisi utama produk.</p>
+</section>
+<section class="section" id="visi">
+  <div class="section-head"><div class="section-no">02</div><div><div class="section-kicker">Arah dan prinsip</div><h2>Visi, Misi & Nilai Inti</h2><p class="section-intro">Teknologi sebagai pendamping pengelolaan kehidupan yang bermanfaat, bertanggung jawab, dan berorientasi pada kemaslahatan.</p></div></div>
+  <div class="info-card" style="background:linear-gradient(120deg,#0d3158,#155e9d);border:0;color:white"><div class="section-kicker" style="color:#8fd5ff">Visi LiNo</div><h3 style="font-size:19px;color:#fff;margin:5px 0">Menjadi platform kecerdasan personal yang membantu manusia memahami, mengelola, dan meningkatkan kualitas kehidupannya.</h3><p style="color:#c5def6">Menghubungkan konteks, aktivitas, kebutuhan, tujuan, dan relasi pengguna dalam satu sistem yang aman dan terintegrasi.</p></div>
+  <div class="grid-3" style="margin-top:11px">
+    <article class="info-card"><div class="card-icon">◎</div><h4>Memahami</h4><p>Membangun pemahaman konteks personal dari data yang sah dan diizinkan.</p></article>
+    <article class="info-card"><div class="card-icon purple">⌖</div><h4>Mengarahkan</h4><p>Membantu menyusun prioritas, rencana, dan rekomendasi yang relevan.</p></article>
+    <article class="info-card"><div class="card-icon teal">↗</div><h4>Mengorkestrasi</h4><p>Menghubungkan layanan dan tindakan dengan otorisasi pengguna.</p></article>
+  </div>
+  <h3>Prinsip inti</h3><div class="tag-row"><span class="tag">Human-centered</span><span class="tag">Consent-first</span><span class="tag">Privacy & Security</span><span class="tag">AI-native</span><span class="tag">Interoperable</span><span class="tag">Outcome-oriented</span><span class="tag">Kemaslahatan</span></div>
+</section>
+<section class="section" id="masalah">
+  <div class="section-head"><div class="section-no">03</div><div><div class="section-kicker">Mengapa LiNo dibangun</div><h2>Masalah & Solusi</h2><p class="section-intro">Fokusnya bukan menambah aplikasi, tetapi mengurangi fragmentasi konteks dan beban koordinasi yang ditanggung pengguna.</p></div></div>
+  <div class="grid-2">
+    <article class="info-card"><h4 style="color:#b66b22">Tantangan saat ini</h4><ul style="font-size:10px;color:#657890;padding-left:17px;line-height:1.9"><li>Data tersebar di aplikasi dan layanan berbeda.</li><li>Pengguna mengulang input dan menjelaskan konteks.</li><li>Agenda, relasi, dan kebutuhan tidak saling terhubung.</li><li>Rekomendasi sering terlepas dari kondisi nyata.</li><li>Tindakan lintas layanan memerlukan koordinasi manual.</li></ul></article>
+    <article class="info-card"><h4 style="color:#14845f">Pendekatan LiNo</h4><ul style="font-size:10px;color:#657890;padding-left:17px;line-height:1.9"><li>Data otoritatif dari pilar dengan consent.</li><li>Personal Life Model untuk konteks pengguna.</li><li>AI memahami prioritas dan hubungan antaraktivitas.</li><li>Planning dan rekomendasi yang dapat dievaluasi.</li><li>Orkestrasi tindakan melalui layanan terotorisasi.</li></ul></article>
+  </div>
+  <p><b>Contoh:</b> agenda keluarga, kebutuhan mobilitas, dan aktivitas pendidikan dapat saling memengaruhi. DNA Engine membantu menghubungkan konteks tersebut sehingga pengguna tidak perlu menyatukannya secara manual dari banyak aplikasi.</p>
+</section>
+<section class="section" id="bisnis">
+  <div class="section-head"><div class="section-no">04</div><div><div class="section-kicker">Keberlanjutan produk</div><h2>Model Bisnis</h2><p class="section-intro">Model pendapatan yang pernah dibahas sebagai opsi untuk mendukung layanan, pengembangan, dan keberlanjutan ekosistem.</p></div></div>
+  <div class="grid-3">
+    <article class="info-card"><div class="card-icon">⌂</div><h4>Iuran Keluarga</h4><div style="font-size:18px;font-weight:900;color:#126bc8;margin:6px 0">Rp10.000<span style="font-size:9px;color:#8091a7;font-weight:500"> / bulan</span></div><p>Opsi tahunan yang pernah dibahas: Rp100.000 per keluarga.</p></article>
+    <article class="info-card"><div class="card-icon purple">◉</div><h4>Sponsorship & Iklan</h4><p>Peluang kolaborasi dengan mitra dan sponsor yang relevan, dengan pengalaman pengguna tetap menjadi prioritas.</p></article>
+    <article class="info-card"><div class="card-icon teal">▣</div><h4>Layanan Premium</h4><p>Contoh opsi tambahan: kapasitas backup dan fitur premium sesuai kebutuhan pengguna.</p></article>
+  </div>
+  <div class="status-row"><span class="status blueprint">Konsep / opsi bisnis</span><span class="status plan">Belum dinyatakan sebagai harga final</span></div>
+  <p>Perhitungan ilustratif dari skema Rp10.000 per bulan: 100 ribu keluarga = Rp1 miliar/bulan; 1 juta = Rp10 miliar/bulan; 5 juta = Rp50 miliar/bulan. Ini simulasi pendapatan kotor, bukan proyeksi atau jaminan jumlah pengguna.</p>
+</section>
+<section class="section" id="ekosistem">
+  <div class="section-head"><div class="section-no">05</div><div><div class="section-kicker">Produk yang saling melengkapi</div><h2>Produk & Ekosistem LiNo</h2><p class="section-intro">Enam kelompok produk dengan tanggung jawab berbeda, bekerja sebagai satu ekosistem.</p></div></div>
+  <div class="grid-2">
+    <article class="info-card"><div class="card-top"><span class="card-icon">▣</span><h4>LiNo Mobile</h4></div><p>Aplikasi utama pengguna berbasis Flutter untuk mengakses pilar dan aktivitas kehidupan sehari-hari.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon purple">▤</span><h4>LiNo Web</h4></div><p>Pengalaman web dan dashboard berbasis React / TypeScript untuk kebutuhan pengguna dan pengelolaan.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon teal">✧</span><h4>LiNo AI</h4></div><p>Antarmuka dan kapabilitas AI yang mengakses DNA Engine untuk memahami konteks, menyusun rencana, dan membantu tindakan.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon orange">⌘</span><h4>LiNo Technology</h4></div><p>Teknologi inti seperti LiNoDB, platform infrastruktur, dan komponen sistem bersama.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon">♙</span><h4>LiNo Identity</h4></div><p>Identitas dan akun terpadu, Android AccountManager / Authenticator, secure session broker, dan SSO.</p></article>
+    <article class="info-card"><div class="card-top"><span class="card-icon purple">◈</span><h4>LiNo Layanan</h4></div><p>Lini layanan B2B seperti cloud, hosting, dan konsultasi teknologi; terpisah dari pilar mobilitas atau eCommerce.</p></article>
+  </div>
+</section>
+<section class="section" id="pilar">
+  <div class="section-head"><div class="section-no">06</div><div><div class="section-kicker">Domain kehidupan</div><h2>16 Pilar Kehidupan</h2><p class="section-intro">Pilar merupakan domain data, aktivitas, dan kapabilitas yang menjadi sumber konteks bagi DNA Engine.</p></div></div>
+  <div class="pillar-grid">
+    <div class="pillar"><span class="pillar-num">01</span><span>Spiritual</span></div><div class="pillar"><span class="pillar-num">02</span><span>Family</span></div><div class="pillar"><span class="pillar-num">03</span><span>Move / Mobility</span></div><div class="pillar"><span class="pillar-num">04</span><span>Finance</span></div>
+    <div class="pillar"><span class="pillar-num">05</span><span>Pendidikan</span></div><div class="pillar"><span class="pillar-num">06</span><span>Kolaborasi</span></div><div class="pillar"><span class="pillar-num">07</span><span>Ekonomi</span></div><div class="pillar"><span class="pillar-num">08</span><span>eCommerce</span></div>
+    <div class="pillar"><span class="pillar-num">09</span><span>Konten Publik</span></div><div class="pillar"><span class="pillar-num">10</span><span>Komunitas</span></div><div class="pillar"><span class="pillar-num">11</span><span>Observability / Admin Tools</span></div><div class="pillar"><span class="pillar-num">12</span><span>Auth & Identity</span></div>
+    <div class="pillar"><span class="pillar-num">13</span><span>Kelompok</span></div><div class="pillar"><span class="pillar-num">14</span><span>Leadership</span></div><div class="pillar"><span class="pillar-num">15</span><span>DNA Engine</span></div><div class="pillar"><span class="pillar-num">16</span><span>Inovasi & Riset</span></div>
+  </div>
+  <div class="status-row" style="margin-top:13px"><span class="status existing">Implementasi backend, frontend, database & API tersedia</span><span class="status blueprint">Penyempurnaan dan integrasi berlanjut</span></div>
+  <p>Status tersebut mengikuti konfirmasi pengembangan: seluruh 16 pilar telah memiliki implementasi yang berfungsi. Ini tidak otomatis berarti seluruhnya sudah teruji penuh atau siap produksi.</p>
+</section>
+<section class="section" id="dna">
+  <div class="section-head"><div class="section-no">07</div><div><div class="section-kicker">Inti kecerdasan LiNo</div><h2>DNA Engine — Personal Intelligence</h2><p class="section-intro">DNA Engine bukan chatbot. Ia adalah sistem pemahaman dan pengelolaan kehidupan personal yang bekerja lintas pilar, berdasarkan data dan izin pengguna.</p></div></div>
+  <div class="diagram"><div class="diagram-title">Siklus kecerdasan dan pengelolaan kehidupan</div>
+    <div class="layer"><div class="layer-label">DATA & KONTEKS</div><div class="layer-content"><div class="node">Pilar Kehidupan<small>Data otoritatif + consent</small></div><div class="node">Interaksi Pengguna<small>Tujuan, preferensi, koreksi</small></div><div class="node">Event & Aktivitas<small>Perubahan konteks</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label" style="background:#6449bd">UNDERSTANDING</div><div class="layer-content"><div class="node violet">Personal Life Model<small>Profil, relasi, konteks</small></div><div class="node violet">Understanding Engine<small>Fakta, inferensi, confidence</small></div><div class="node violet">Life Event Engine<small>Deteksi perubahan</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label" style="background:#0d8a91">INTELLIGENCE</div><div class="layer-content"><div class="node core">Planning Engine<small>Prioritas dan rencana</small></div><div class="node core">Proactive Intelligence<small>Waktu yang tepat untuk membantu</small></div><div class="node core">Outcome Evaluator<small>Hasil dan pembelajaran</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label" style="background:#16845f">ACTION</div><div class="layer-content"><div class="node green">Action Orchestrator<small>Workflow + capability + approval</small></div><div class="node green">User-facing Agent<small>Interaksi dan persetujuan</small></div><div class="node green">Data-facing Agent<small>Analisis dan ringkasan</small></div></div></div>
+  </div>
+  <h3>Prinsip operasional DNA Engine</h3><div class="grid-2"><article class="info-card"><h4>Fakta ≠ Inferensi</h4><p>Data sumber, hasil inferensi AI, dan tindakan yang diizinkan harus dibedakan dengan jelas.</p></article><article class="info-card"><h4>Proaktif, tidak selalu memanggil model</h4><p>Event diproses sesuai aturan dan kebutuhan. Model AI dipanggil ketika memberi nilai tambah, bukan untuk setiap event.</p></article><article class="info-card"><h4>Human approval</h4><p>Tindakan berdampak memerlukan otorisasi yang sesuai. AI tidak boleh menganggap rekomendasi sebagai izin.</p></article><article class="info-card"><h4>Evaluasi hasil</h4><p>Sistem belajar dari outcome dan koreksi pengguna, bukan hanya menghitung jumlah percakapan.</p></article></div>
+</section>
+<section class="section" id="arsitektur">
+  <div class="section-head"><div class="section-no">08</div><div><div class="section-kicker">Gambaran menyeluruh</div><h2>Arsitektur Sistem LiNo</h2><p class="section-intro">Arsitektur berlapis yang menghubungkan pengalaman pengguna, kecerdasan, layanan domain, dan fondasi data/infrastruktur.</p></div></div>
+  <div class="diagram"><div class="diagram-title">High-level architecture · logical view</div>
+    <div class="layer"><div class="layer-label">USER APPS</div><div class="layer-content"><div class="node">LiNo Mobile<small>Flutter</small></div><div class="node">LiNo Web<small>React / TypeScript</small></div><div class="node">LiNo AI<small>AI interface</small></div><div class="node">LiNo Identity<small>Native Android + Web</small></div></div></div><div class="flow-arrow">↕</div>
+    <div class="layer"><div class="layer-label">ACCESS</div><div class="layer-content"><div class="node">LiNo Identity<small>Authentication & session</small></div><div class="node">LiNo Gateway<small>Routing, policy, aggregation</small></div><div class="node">App Bridge SDK<small>Cross-app handoff</small></div></div></div><div class="flow-arrow">↕</div>
+    <div class="layer"><div class="layer-label" style="background:#6849bf">INTELLIGENCE</div><div class="layer-content"><div class="node core">DNA Engine<small>Understand · Plan · Orchestrate</small></div><div class="node core">Workflow Engine<small>Durable execution</small></div><div class="node core">Pillar Services<small>Domain capabilities</small></div><div class="node core">Realtime & Notification<small>Live and async delivery</small></div></div></div><div class="flow-arrow">↕</div>
+    <div class="layer"><div class="layer-label" style="background:#16845f">FOUNDATION</div><div class="layer-content"><div class="node green">LiNoDB<small>SQL routing & data plane</small></div><div class="node green">Kafka / Redis<small>Events and cache/wakeup</small></div><div class="node green">Kubernetes + Service Platform<small>Runtime governance</small></div><div class="node green">Observability<small>Metrics · logs · traces</small></div></div></div>
+  </div>
+  <p>Diagram ini menunjukkan hubungan logis, bukan urutan network hop atau deployment final. Komunikasi antar komponen mengikuti kontrak API/event, otorisasi, dan kebutuhan domain.</p>
+  <div class="tag-row"><span class="tag">Go · Control / Business Plane</span><span class="tag">Rust · Data / Execution Plane</span><span class="tag">PostgreSQL · Durable State</span><span class="tag">Kafka · Event Backbone</span></div>
+</section>
+<section class="section" id="identity">
+  <div class="section-head"><div class="section-no">09</div><div><div class="section-kicker">Identitas terpadu</div><h2>LiNo Identity</h2><p class="section-intro">Satu fondasi identitas dan sesi untuk mengakses LiNo Mobile, LiNo Web, dan LiNo AI.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Android Identity App</h4><p>Aplikasi native Kotlin yang menggabungkan Account Management, Android AccountManager / Authenticator, dan secure session broker.</p></article><article class="info-card"><h4>Identity Web</h4><p>Pengelolaan akun melalui web React, terhubung dengan backend identitas yang sama.</p></article><article class="info-card"><h4>SSO & Session</h4><p>Login tunggal lintas aplikasi dengan pengelolaan sesi, perangkat, keamanan, dan otorisasi.</p></article><article class="info-card"><h4>Integrasi Flutter</h4><p>Komunikasi dengan aplikasi Flutter melalui platform channel dan mekanisme app handoff yang terkontrol.</p></article></div>
+  <div class="status-row"><span class="status blueprint">Desain produk & integrasi</span><span class="status plan">Validasi keamanan dan implementasi bertahap</span></div>
+</section>
+<section class="section" id="gateway">
+  <div class="section-head"><div class="section-no">10</div><div><div class="section-kicker">Gerbang layanan</div><h2>LiNo Gateway</h2><p class="section-intro">Lapisan akses dan orkestrasi request yang menjaga kontrak, kebijakan, serta efisiensi komunikasi antarlayanan.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Rust Data Plane</h4><p>Target untuk jalur request ber-throughput tinggi: routing, connection handling, async fan-out/fan-in, dan pemrosesan yang terukur.</p></article><article class="info-card"><h4>Go Control Plane</h4><p>Pengelolaan konfigurasi, kebijakan, registrasi, dan administrasi gateway.</p></article></div>
+  <h3>Aggregation Engine</h3><p>Rancangan aggregation engine menggunakan definisi DAG/graph untuk menjalankan pemanggilan layanan, dependency, batas waktu, dan penggabungan hasil secara deterministik. Setiap node dapat memiliki aturan otorisasi dan budget sendiri.</p>
+  <div class="tag-row"><span class="tag">Async fan-out / fan-in</span><span class="tag">Timeout budget</span><span class="tag">Typed result</span><span class="tag">Partial failure</span><span class="tag">Idempotent retry</span></div>
+  <p>Retry hanya dilakukan untuk operasi yang aman atau memiliki idempotency key. Kegagalan layanan tidak boleh disamarkan sebagai nilai sukses palsu.</p>
+</section>
+<section class="section" id="linodb">
+  <div class="section-head"><div class="section-no">11</div><div><div class="section-kicker">Fondasi data</div><h2>LiNoDB</h2><p class="section-intro">Konsep database platform dengan satu endpoint logis, routing SQL, dan pengelolaan shard yang transparan bagi layanan.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Rust SQL Router</h4><p>PostgreSQL wire protocol, routing query ke shard, koneksi, dan jalur data yang dirancang efisien.</p></article><article class="info-card"><h4>Go Control Plane</h4><p>Metadata, administrasi cluster, shard map, lifecycle, dan operasi pengendalian.</p></article><article class="info-card"><h4>Metadata & HA</h4><p>etcd untuk metadata/routing state; PostgreSQL dengan Patroni untuk HA; pgBackRest untuk backup dan PITR.</p></article><article class="info-card"><h4>Virtual Sharding</h4><p>Konsep 64 virtual shards, routing, pemindahan shard online, dan rebalance yang harus dijaga konsistensinya.</p></article></div>
+  <h3>Prinsip penting</h3><p>SQL Gateway LiNoDB berbeda dari LiNo API Gateway. Database gateway menangani protokol dan routing SQL; API Gateway menangani request aplikasi dan kontrak layanan. Operasi shard movement memerlukan fencing, metadata konsisten, observability, serta pengujian recovery sebelum digunakan pada beban produksi.</p>
+  <div class="status-row"><span class="status blueprint">Fondasi dan rancangan teknis berkembang</span><span class="status plan">Perlu uji correctness & failure recovery</span></div>
+</section>
+<section class="section" id="workflow">
+  <div class="section-head"><div class="section-no">12</div><div><div class="section-kicker">Eksekusi proses jangka panjang</div><h2>LiNo Workflow Engine</h2><p class="section-intro">Menjalankan proses durable lintas layanan, termasuk timer, retry, saga, approval, dan pemulihan setelah gangguan.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Rust Execution Runtime</h4><p>Tokio event loop, worker pool, correlation engine, state machine, scheduler durable, timer/retry, saga, persistence, dan recovery.</p></article><article class="info-card"><h4>Go Control Plane</h4><p>Admin API, pengelolaan definisi workflow, konfigurasi, dan activity workers Go yang sudah ada tetap dapat digunakan.</p></article></div>
+  <h3>Reliability model</h3><div class="tag-row"><span class="tag">Lease + heartbeat</span><span class="tag">Fencing token</span><span class="tag">Idempotency</span><span class="tag">Bounded worker pool</span><span class="tag">Graceful drain</span><span class="tag">Crash recovery</span></div>
+  <p>State workflow disimpan secara durable. Kafka digunakan untuk event dan notifikasi; transactional outbox/inbox dapat dipakai untuk menjaga konsistensi publikasi. Redis bersifat opsional untuk wake-up atau cache. Transaksi database dijaga singkat—hindari menahan transaksi selama inference AI, menunggu approval, atau memanggil API eksternal.</p>
+  <p><b>Catatan:</b> zero-downtime membutuhkan redundansi dan dependency yang tersedia. Crash recovery saja tidak menjamin layanan selalu tanpa downtime.</p>
+</section>
+<section class="section" id="realtime">
+  <div class="section-head"><div class="section-no">13</div><div><div class="section-kicker">Komunikasi langsung</div><h2>LiNo Realtime</h2><p class="section-intro">Kanal komunikasi real-time untuk aplikasi yang sedang aktif, berbeda peran dari push notification.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Rust WebSocket Service</h4><p>Menangani koneksi, event loop, fan-out, subscription, reconnect, dan pengelolaan koneksi secara efisien.</p></article><article class="info-card"><h4>Event-driven</h4><p>Event berasal dari layanan domain/Kafka, lalu dikirim ke sesi aktif sesuai identitas, subscription, dan otorisasi.</p></article></div>
+  <p>Realtime cocok untuk update langsung ketika aplikasi aktif. Ketika aplikasi berada di background atau tidak aktif, pengiriman dapat dialihkan melalui FCM. Reconnect dan pemulihan state tetap perlu mengacu pada data durable, bukan menganggap setiap pesan pasti diterima.</p>
+</section>
+<section class="section" id="observability">
+  <div class="section-head"><div class="section-no">14</div><div><div class="section-kicker">Visibilitas operasional</div><h2>LiNo Observability</h2><p class="section-intro">Menyatukan metrik, log, trace, alert, dan konteks operasional agar sistem dapat dipahami saat normal maupun saat bermasalah.</p></div></div>
+  <div class="grid-3"><article class="info-card"><div class="card-icon">⌁</div><h4>Metrics</h4><p>Throughput, latency, error rate, saturation, dan kesehatan dependency.</p></article><article class="info-card"><div class="card-icon purple">≋</div><h4>Logs</h4><p>Log terstruktur dengan correlation ID dan konteks layanan.</p></article><article class="info-card"><div class="card-icon teal">⌖</div><h4>Distributed Tracing</h4><p>Perjalanan request lintas gateway, workflow, dan layanan domain.</p></article></div>
+  <p>Rancangan v2 memperbaiki agregasi, tracing, alerting, dan ringkasan insiden. Komponen yang pernah dibahas mencakup OpenTelemetry, Prometheus, ClickHouse, dan notifikasi Telegram. AI dapat membantu diagnosis dan merangkum anomali; perubahan produksi tetap memerlukan kontrol dan persetujuan manusia.</p>
+</section>
+<section class="section" id="notification">
+  <div class="section-head"><div class="section-no">15</div><div><div class="section-kicker">Penyampaian informasi</div><h2>LiNo Notification</h2><p class="section-intro">Satu sistem notifikasi dengan jalur delivery yang menyesuaikan kondisi aplikasi dan kebutuhan pengguna.</p></div></div>
+  <div class="grid-3"><article class="info-card"><div class="card-icon">◉</div><h4>FCM Push</h4><p>Push notification ketika aplikasi tidak aktif atau berada di background.</p></article><article class="info-card"><div class="card-icon purple">↯</div><h4>Realtime</h4><p>Pengiriman langsung melalui WebSocket untuk sesi aplikasi aktif.</p></article><article class="info-card"><div class="card-icon teal">▤</div><h4>Durable Inbox</h4><p>Riwayat notifikasi tersimpan sehingga pengguna dapat membacanya kembali.</p></article></div>
+  <p>Kafka menjadi jalur event, sedangkan durable notification inbox menjadi catatan yang dapat dipulihkan. Push dan realtime adalah kanal pengiriman, bukan satu-satunya tempat penyimpanan kebenaran.</p>
+</section>
+<section class="section" id="registry">
+  <div class="section-head"><div class="section-no">16</div><div><div class="section-kicker">Pemetaan kapabilitas</div><h2>LiNo Pillar Registry</h2><p class="section-intro">Lapisan katalog yang membantu sistem mengenali domain/pilar, kapabilitas yang tersedia, dan integrasi yang dapat digunakan.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Domain Catalog</h4><p>Daftar pilar dan layanan domain yang menjadi bagian ekosistem LiNo.</p></article><article class="info-card"><h4>Capability Discovery</h4><p>Deskripsi kapabilitas agar aplikasi, DNA Engine, dan orchestrator dapat menemukan fungsi yang relevan.</p></article><article class="info-card"><h4>Policy-aware Access</h4><p>Kapabilitas tidak otomatis boleh dipanggil; akses tetap mengikuti identitas, consent, dan otorisasi.</p></article><article class="info-card"><h4>Lifecycle & Version</h4><p>Informasi status dan versi kontrak membantu integrasi berkembang secara terkontrol.</p></article></div>
+  <div class="status-row"><span class="status blueprint">Konsep arsitektur / integrasi</span></div>
+</section>
+<section class="section" id="platform">
+  <div class="section-head"><div class="section-no">17</div><div><div class="section-kicker">Platform operasional</div><h2>Kubernetes + LiNo Service Platform</h2><p class="section-intro">Kubernetes menjadi orchestrator; LiNo Service Platform menjadi lapisan pengelolaan layanan di atasnya.</p></div></div>
+  <div class="grid-2"><article class="info-card"><h4>Kubernetes</h4><p>Menjalankan workload, scheduling, service discovery, health checks, rollout, dan mekanisme orkestrasi container.</p></article><article class="info-card"><h4>LiNo Service Platform</h4><p>Abstraksi internal untuk service catalog, lifecycle, policy, konfigurasi, integrasi secrets, template deployment, dan runtime governance.</p></article></div>
+  <p>LiNo Service Platform bukan pengganti Kubernetes dan tidak perlu menjadi proxy untuk setiap transaksi. Tujuannya menyederhanakan cara tim mengembangkan, merilis, mengamati, dan mengelola layanan.</p>
+</section>
+<section class="section" id="security">
+  <div class="section-head"><div class="section-no">18</div><div><div class="section-kicker">Keamanan dan kesiapan operasi</div><h2>Keamanan & Infrastruktur</h2><p class="section-intro">Keamanan harus hadir dari identitas hingga penyimpanan data, serta dari proses development hingga operasi produksi.</p></div></div>
+  <div class="architecture-list">
+    <div class="architecture-item"><span class="mini">♙</span><div><b>Identity & Access</b><span>Authentication, authorization, session, device, MFA, dan kontrol akses.</span></div></div>
+    <div class="architecture-item"><span class="mini">◈</span><div><b>Secrets Management</b><span>Pengelolaan secret dan credential melalui mekanisme terkontrol.</span></div></div>
+    <div class="architecture-item"><span class="mini">▣</span><div><b>Data Protection</b><span>Enkripsi, backup, restore, PITR, retensi, dan pemisahan akses.</span></div></div>
+    <div class="architecture-item"><span class="mini">⌁</span><div><b>Operational Safety</b><span>Audit log, rate limit, bounded pool, graceful shutdown, dan alert.</span></div></div>
+    <div class="architecture-item"><span class="mini">⇄</span><div><b>Resilience</b><span>Health checks, redundancy, failover, recovery, dan pengujian kegagalan.</span></div></div>
+    <div class="architecture-item"><span class="mini">⌘</span><div><b>Deployment</b><span>CI/CD, versioned configuration, staged rollout, dan rollback plan.</span></div></div>
+  </div>
+  <p>Rencana pengembangan infrastruktur dilakukan bertahap: mulai dari deployment sederhana, kemudian Kubernetes dan penambahan node sesuai kebutuhan. Skalabilitas harus dibuktikan melalui benchmark, uji beban, dan uji pemulihan—bukan hanya berdasarkan jumlah server.</p>
+</section>
+<section class="section app-relations-section" id="app-relations">
+  <div class="section-head"><div class="section-no">19</div><div><div class="section-kicker">Integrasi ekosistem aplikasi</div><h2>Hubungan Antar Aplikasi</h2><p class="section-intro">Bagaimana LiNo Identity, LiNo AI, dan LiNo Mobile saling terhubung—mulai dari identitas dan sesi, perpindahan konteks, sampai hasil tindakan kembali ke pengguna.</p></div></div>
+  <div class="app-relationship-hero">
+    <div><div class="eyebrow">ONE ECOSYSTEM · CONNECTED EXPERIENCE</div><h3>Satu identitas. Dua pengalaman utama. Satu alur yang terhubung.</h3><p>LiNo Mobile menjadi aplikasi utama untuk aktivitas dan layanan kehidupan sehari-hari. LiNo AI menjadi lapisan kecerdasan yang memahami konteks dan membantu merencanakan tindakan. LiNo Identity menjaga akun, autentikasi, dan sesi agar seluruh aplikasi menggunakan identitas yang konsisten.</p></div>
+    <div class="app-relationship-stats"><div class="app-stat"><strong>01</strong><span>Identity foundation</span></div><div class="app-stat"><strong>02</strong><span>Pengalaman utama: Mobile + AI</span></div><div class="app-stat"><strong>01</strong><span>Standar app handoff</span></div><div class="app-stat"><strong>16</strong><span>Pilar kapabilitas domain</span></div></div>
+  </div>
+  <div class="app-map" id="appMap" data-flow="ai-mobile">
+    <div class="app-map-head"><div><small>LOGICAL APP-TO-APP ARCHITECTURE</small><strong>Arsitektur hubungan aplikasi LiNo</strong></div><span class="map-status">● BLUEPRINT INTEGRASI</span></div>
+    <div class="app-flow-scroll"><div class="app-flow-row">
+      <article class="app-node user" data-node="user"><div class="app-node-icon">♙</div><strong>Pengguna</strong><small>Pemilik akun</small><em>Memulai sesi</em></article>
+      <div class="app-connector route-sso"><span>Login<br>dan otorisasi</span><b>→</b></div>
+      <article class="app-node identity" data-node="identity"><div class="app-node-icon">⬡</div><strong>LiNo Identity</strong><small>Native Kotlin · Identity Web</small><em>Account · SSO · Session Broker</em></article>
+      <div class="app-connector route-sso"><span>SSO<br>session</span><b>⇄</b></div>
+      <article class="app-node ai" data-node="ai"><div class="app-node-icon">✧</div><strong>LiNo AI</strong><small>DNA Engine interface</small><em>Understand · Plan · Assist</em></article>
+      <div class="app-connector route-handoff"><span>Capability<br>+ handoff_id</span><b>→</b></div>
+      <article class="app-node bridge" data-node="bridge"><div class="app-node-icon">⬡</div><strong>LiNo App Bridge SDK</strong><small>SDK tertanam di aplikasi</small><em>Intent · Handoff · Result</em></article>
+      <div class="app-connector route-handoff"><span>Android<br>Explicit Intent</span><b>→</b></div>
+      <article class="app-node mobile" data-node="mobile"><div class="app-node-icon">▣</div><strong>LiNo Mobile</strong><small>Flutter · aplikasi utama</small><em>16 pilar kehidupan</em></article>
+    </div></div>
+    <div class="app-return-flow route-result"><span class="return-chip">RETURN FLOW</span><b>←</b><span>LiNo Mobile mengembalikan hasil melalui Activity Result / callback</span><b>←</b><span class="return-chip">LiNo AI melanjutkan konteks</span></div>
+    <div class="app-map-note"><b>Catatan arsitektur:</b> LiNo App Bridge SDK bukan aplikasi atau backend terpisah. SDK ditanam pada aplikasi sumber dan tujuan. Diagram menampilkannya sebagai lapisan penghubung agar alur handoff mudah dipahami.</div>
+    <div class="backend-band">
+      <div class="backend-heading"><span class="backend-cloud">☁</span><div><strong>LiNo Backend Platform</strong><small>Data otoritatif, autentikasi, kapabilitas domain, dan status tindakan tetap dikelola backend</small></div></div>
+      <div class="backend-grid">
+        <div class="backend-service"><b>LiNo Account Service</b><span>Account · device · session · security</span></div>
+        <div class="backend-service"><b>DNA Engine</b><span>Personal Life Model · understanding · planning</span></div>
+        <div class="backend-service"><b>LiNo Gateway</b><span>API routing · policy · service access</span></div>
+        <div class="backend-service"><b>Domain + Workflow</b><span>16 pilar · durable action · outcome state</span></div>
+      </div>
+    </div>
+    <div class="flow-switcher" aria-label="Pilih alur hubungan aplikasi">
+      <button class="flow-tab" type="button" data-flow-choice="overview" aria-pressed="false">Overview</button>
+      <button class="flow-tab" type="button" data-flow-choice="sso" aria-pressed="false">Login / SSO</button>
+      <button class="flow-tab" type="button" data-flow-choice="ai-mobile" aria-pressed="true">LiNo AI → Mobile</button>
+      <button class="flow-tab" type="button" data-flow-choice="result" aria-pressed="false">Return Result</button>
+    </div>
+    <div class="flow-description" id="flowDescription" aria-live="polite"><b>Alur AI ke Mobile:</b> LiNo AI menentukan capability yang dibutuhkan, lalu App Bridge mengirim permintaan dengan opaque <code>handoff_id</code>. LiNo Mobile menerima Intent, memvalidasi konteks ke backend, dan membuka screen melalui capability registry / internal router.</div>
+  </div>
+  <h3>Peran setiap aplikasi</h3>
+  <div class="app-detail-grid">
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">⬡</span><h4>LiNo Identity — Fondasi identitas</h4></div><p>Mengelola account, autentikasi, perangkat, dan sesi. Android AccountManager / Authenticator serta secure session broker menjadi bagian dari integrasi native. Identity Web menggunakan fondasi akun yang sama.</p><span class="mini-tag">ACCOUNT · AUTH · SSO</span></article>
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">✧</span><h4>LiNo AI — Lapisan kecerdasan</h4></div><p>Menjadi antarmuka untuk DNA Engine: memahami konteks, menyusun rencana, memberi rekomendasi, dan meminta kapabilitas aplikasi lain ketika pengguna perlu melakukan tindakan.</p><span class="mini-tag">UNDERSTAND · PLAN · ORCHESTRATE</span></article>
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">▣</span><h4>LiNo Mobile — Aplikasi utama</h4></div><p>Menjadi tempat pengguna mengakses pengalaman operasional 16 pilar. Aplikasi Flutter memetakan capability yang diterima ke halaman internal dan menjalankan interaksi domain yang sesuai.</p><span class="mini-tag">FLUTTER · 16 PILAR · ACTIONS</span></article>
+  </div>
+  <h3>Contoh alur: AI meminta Mobile membuka sebuah fitur</h3>
+  <div class="app-process">
+    <div class="app-process-step"><div class="step-num">1</div><b>Pengguna berinteraksi dengan LiNo AI</b><span>AI memahami kebutuhan dan konteks yang relevan.</span></div>
+    <div class="app-process-step"><div class="step-num">2</div><b>AI menentukan capability</b><span>Misalnya membuka agenda keluarga atau halaman pembayaran; tindakan sensitif tetap memerlukan persetujuan.</span></div>
+    <div class="app-process-step"><div class="step-num">3</div><b>App Bridge membuat handoff</b><span>Mengirim capability dan opaque handoff_id melalui mekanisme app-to-app.</span></div>
+    <div class="app-process-step"><div class="step-num">4</div><b>Mobile membuka halaman tujuan</b><span>Entry Activity menerima Intent; registry memetakan capability ke internal route Flutter.</span></div>
+    <div class="app-process-step"><div class="step-num">5</div><b>Hasil dikembalikan</b><span>Backend menyimpan status domain; callback membantu AI melanjutkan konteks.</span></div>
+  </div>
+  <h3>Mekanisme komunikasi yang digunakan</h3>
+  <div class="app-detail-grid">
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">↔</span><h4>Identity & SSO</h4></div><p>LiNo Identity menyediakan alur login dan session broker. Integrasi aplikasi memeriksa sesi melalui mekanisme identitas yang sah; token tidak disisipkan ke payload navigasi.</p><span class="mini-tag">SESSION BROKER</span></article>
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">⌁</span><h4>Native Intent + Capability</h4></div><p>Explicit Android Intent menuju satu entry Activity. Capability registry di aplikasi tujuan memilih screen atau route internal tanpa membuat deep link untuk setiap fitur.</p><span class="mini-tag">APP BRIDGE SDK</span></article>
+    <article class="app-detail-card"><div class="app-detail-top"><span class="app-detail-icon">↩</span><h4>Activity Result + App Links</h4></div><p>Activity Result / callback mengembalikan konteks alur. App Links digunakan untuk external entry, browser fallback, atau callback identity—bukan sebagai router setiap halaman internal.</p><span class="mini-tag">CALLBACK · EXTERNAL FALLBACK</span></article>
+  </div>
+  <div class="app-security-strip"><span class="app-security-icon">⌑</span><div><strong>Keamanan dan validasi lintas aplikasi</strong><p>Intent hanya membawa informasi minimum yang diperlukan. Backend tetap menjadi sumber kebenaran untuk sesi, account, izin capability, masa berlaku handoff, dan status transaksi. Callback UI bukan bukti bahwa transaksi telah berhasil.</p><div class="app-security-points"><span>Jangan kirim token / PIN / OTP</span><span>Jangan kirim PII di URL / Intent</span><span>Validasi session + account</span><span>Validasi capability + expiry</span><span>Domain backend = source of truth</span></div></div></div>
+  <div class="status-row"><span class="status blueprint">Blueprint integrasi aplikasi</span><span class="status plan">Implementasi dan uji lintas APK perlu divalidasi</span></div>
+</section>
+<section class="section" id="bridge">
+  <div class="section-head"><div class="section-no">20</div><div><div class="section-kicker">Pengalaman lintas aplikasi</div><h2>LiNo App Bridge SDK</h2><p class="section-intro">SDK untuk memungkinkan LiNo AI, LiNo Mobile, dan LiNo Identity saling berpindah konteks secara aman tanpa membuat ratusan deep link.</p></div></div>
+  <div class="callout"><span class="big">⇄</span><div><strong>Satu pintu masuk per aplikasi, banyak kapabilitas di belakangnya.</strong><span>App Bridge mengirim intent/capability dan referensi handoff, bukan membawa data sensitif atau menganggap UI sebagai sumber kebenaran transaksi.</span></div></div>
+  <h3>Komponen SDK</h3><div class="grid-2"><article class="info-card"><h4>Android Native SDK</h4><p>Library Kotlin untuk entry Activity, explicit Intent, Activity Result, dan integrasi identity.</p></article><article class="info-card"><h4>Flutter Plugin</h4><p>Jembatan platform channel untuk membuka capability internal dan menerima hasil handoff.</p></article><article class="info-card"><h4>Capability Registry</h4><p>Registry di aplikasi tujuan untuk memetakan capability ke screen atau internal route.</p></article><article class="info-card"><h4>Durable Handoff Context</h4><p>Opaque handoff_id merujuk pada konteks backend yang tervalidasi dan memiliki masa berlaku.</p></article></div>
+  <h3>Alur handoff</h3><div class="diagram"><div class="diagram-title">Contoh: LiNo AI meminta LiNo Mobile membuka sebuah kapabilitas</div>
+    <div class="layer"><div class="layer-label">SOURCE</div><div class="layer-content"><div class="node core">LiNo AI<small>Membuat permintaan capability</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label">BRIDGE</div><div class="layer-content"><div class="node">App Bridge SDK<small>Validasi format & kirim opaque handoff_id</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label">TARGET</div><div class="layer-content"><div class="node">LiNo Mobile Entry Activity<small>Satu entry point</small></div><div class="node">Capability Registry<small>Resolve internal route</small></div></div></div><div class="flow-arrow">↓</div>
+    <div class="layer"><div class="layer-label">RESULT</div><div class="layer-content"><div class="node green">Backend Validation<small>Session · account · capability · expiry</small></div><div class="node green">Callback / Resume<small>Hasil domain yang authoritative</small></div></div></div>
+  </div>
+  <h3>Kontrak dan keamanan</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Elemen</th><th>Peran</th><th>Batasan</th></tr></thead><tbody>
+    <tr><td><b>capability</b></td><td>Nama aksi/fitur yang diminta</td><td>Harus terdaftar dan diizinkan aplikasi tujuan</td></tr>
+    <tr><td><b>handoff_id</b></td><td>Referensi opaque ke konteks backend</td><td>Tidak memuat PII atau token</td></tr>
+    <tr><td><b>callback / result</b></td><td>Mengembalikan status alur ke pemanggil</td><td>Bukan bukti final transaksi domain</td></tr>
+    <tr><td><b>App Links</b></td><td>External entry dan fallback web/identity</td><td>Bukan deep link untuk setiap layar internal</td></tr>
+  </tbody></table></div>
+  <p><b>Jangan kirim:</b> access token, refresh token, PIN, OTP, data pembayaran sensitif, atau PII melalui Intent. Backend harus memvalidasi sesi, account, capability, otorisasi, dan expiry. Status transaksi tetap ditentukan oleh backend/domain service atau workflow.</p>
+  <div class="status-row"><span class="status blueprint">Blueprint SDK v0.1</span><span class="status plan">Perlu implementasi dan pengujian lintas aplikasi</span></div>
+</section>
+<section class="section" id="penutup">
+  <div class="section-head"><div class="section-no">21</div><div><div class="section-kicker">Arah berikutnya</div><h2>Kesimpulan & Roadmap</h2><p class="section-intro">Semua fondasi diarahkan untuk satu tujuan: membuat DNA Engine mampu membantu pengguna mengelola kehidupan dengan lebih terhubung dan terukur.</p></div></div>
+  <div class="timeline">
+    <div class="timeline-item"><b>Fondasi konsep dan domain</b><p>Merumuskan visi Life Now / Life In One, ekosistem, dan 16 pilar kehidupan.</p></div>
+    <div class="timeline-item"><b>Implementasi pilar</b><p>Backend, frontend, database, dan API untuk seluruh 16 pilar telah memiliki implementasi yang berfungsi; penyempurnaan dan integrasi berlanjut.</p></div>
+    <div class="timeline-item"><b>Penguatan platform inti</b><p>Identity, Gateway, LiNoDB, Workflow, Realtime, Notification, Observability, dan Service Platform terus disempurnakan.</p></div>
+    <div class="timeline-item"><b>Integrasi DNA Engine & App Bridge</b><p>Menghubungkan pemahaman konteks, perencanaan, orkestrasi tindakan, dan pengalaman lintas aplikasi.</p></div>
+    <div class="timeline-item"><b>Target rilis awal</b><p>Akhir 2027 atau awal 2028 sebagai sasaran yang pernah ditetapkan; pencapaian bergantung pada integrasi, validasi, keamanan, dan kesiapan operasi.</p></div>
+  </div>
+  <div class="callout"><span class="big">✦</span><div><strong>Ukuran keberhasilan LiNo bukan banyaknya fitur atau jumlah layanan.</strong><span>Yang utama adalah seberapa baik LiNo memahami konteks pengguna, menghubungkan aspek kehidupan, menjaga kendali pengguna, dan membantu menghasilkan outcome yang bermanfaat.</span></div></div>
+  <p class="muted" style="font-size:9px">Dokumen ini merupakan rangkuman statis dari arah produk dan diskusi arsitektur LiNo Labs. Status implementasi dapat berubah; detail teknis final harus mengikuti repository, spesifikasi, dan hasil pengujian aktual.</p>
+</section>
+</div>
+<aside class="right-rail">
+  <div class="rail-card"><h3 class="rail-title"><span class="card-icon">◉</span>Ringkasan Percakapan Kita</h3>
+    <div class="chat-item"><span class="chat-avatar">♙</span><div><b>Gagasan awal</b><p>Menyatukan berbagai kebutuhan dan aktivitas kehidupan dalam satu ekosistem.</p></div></div>
+    <div class="chat-item"><span class="chat-avatar">✧</span><div><b>Penajaman visi</b><p>LiNo ditegaskan sebagai AI-native life management, bukan chatbot atau super app biasa.</p></div></div>
+    <div class="chat-item"><span class="chat-avatar">▦</span><div><b>Ekosistem & pilar</b><p>Enam produk, 16 pilar, dan DNA Engine sebagai pusat kecerdasan.</p></div></div>
+    <div class="chat-item"><span class="chat-avatar">⌘</span><div><b>Rekayasa arsitektur</b><p>Identity, Gateway, LiNoDB, Workflow, Realtime, Observability, dan platform.</p></div></div>
+    <div class="chat-item"><span class="chat-avatar">⇄</span><div><b>Integrasi aplikasi</b><p>App Bridge SDK untuk handoff aman antar aplikasi LiNo.</p></div></div>
+    <div class="success-note">✓ Dokumentasi ini disusun untuk menceritakan perjalanan dari konsep hingga rancangan LiNo App Bridge SDK.</div>
+  </div>
+  <div class="rail-card"><h3 class="rail-title">Status Pengembangan</h3>
+    <div class="why-list"><div class="why"><span class="why-icon">✓</span><div><b>Implementasi tersedia</b><span>Fitur/pilar yang telah memiliki implementasi.</span></div></div><div class="why"><span class="why-icon">◇</span><div><b>Blueprint</b><span>Rancangan arsitektur atau kontrak yang telah dibahas.</span></div></div><div class="why"><span class="why-icon">◷</span><div><b>Planned / validasi</b><span>Rencana lanjutan atau pekerjaan yang perlu diuji.</span></div></div></div>
+  </div>
+  <div class="rail-card"><h3 class="rail-title">Mengapa LiNo?</h3>
+    <div class="why-list"><div class="why"><span class="why-icon">◎</span><div><b>Terintegrasi</b><span>Konteks lintas domain tidak berdiri sendiri.</span></div></div><div class="why"><span class="why-icon">✧</span><div><b>Cerdas dan proaktif</b><span>Memahami kebutuhan dan waktu yang tepat untuk membantu.</span></div></div><div class="why"><span class="why-icon">♙</span><div><b>Berpusat pada pengguna</b><span>Consent, kendali, dan persetujuan tetap penting.</span></div></div><div class="why"><span class="why-icon">↗</span><div><b>Berorientasi outcome</b><span>Membantu menghasilkan dampak, bukan sekadar interaksi.</span></div></div></div>
+    <a class="rail-link" href="#arsitektur">Lihat Arsitektur Lengkap →</a>
+  </div>
+</aside>
+</div>
+<footer class="footer"><div><strong>◈ LiNo Labs</strong> <span style="margin-left:9px">AI-native Personal Life Management Platform</span></div><div class="footer-links"><a href="#latar">Dokumentasi</a><a href="#arsitektur">Arsitektur</a><a href="#bridge">App Bridge SDK</a><a href="#beranda">Kembali ke atas ↑</a></div><div>Static HTML · No backend</div></footer>
+</main>
+</div>
+<script>
+(() => {
+  const sidebar = document.getElementById('sidebar');
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = [...document.querySelectorAll('#mainNav a')];
+  const sections = [...document.querySelectorAll('main section[id]')];
+  const search = document.getElementById('siteSearch');
+  const results = document.getElementById('searchResults');
+  const closeMenu = () => sidebar.classList.remove('open');
+  menuToggle?.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navLinks.forEach(link => link.addEventListener('click', closeMenu));
+  const setActive = id => {
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  };
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a,b) => b.intersectionRatio-a.intersectionRatio)[0];
+      if (visible) setActive(visible.target.id);
+    }, {rootMargin:'-18% 0px -68% 0px',threshold:[0,.15,.35,.6]});
+    sections.forEach(section => observer.observe(section));
+  }
+  const searchable = navLinks.map(a => ({title:a.textContent.trim(), href:a.getAttribute('href'), section:document.querySelector(a.getAttribute('href'))}));
+  const renderSearch = () => {
+    const q = search.value.trim().toLocaleLowerCase('id');
+    if (!q) { results.classList.remove('show'); results.innerHTML=''; return; }
+    const matches = searchable.filter(item => (item.title + ' ' + (item.section?.innerText || '')).toLocaleLowerCase('id').includes(q)).slice(0,8);
+    results.innerHTML = matches.length ? matches.map(item => `<a href="${item.href}">${item.title}<small>Buka bagian dokumentasi</small></a>`).join('') : '<div class="empty-search">Tidak ada bagian yang cocok.</div>';
+    results.classList.add('show');
+    results.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {results.classList.remove('show');search.blur();closeMenu();}));
+  };
+
+  const appMap = document.getElementById('appMap');
+  const flowDescription = document.getElementById('flowDescription');
+  const flowCopy = {
+    overview: '<b>Gambaran umum:</b> LiNo Identity menjaga identitas dan sesi. LiNo AI menjalankan pengalaman kecerdasan DNA Engine. LiNo Mobile menjadi aplikasi utama untuk kapabilitas kehidupan. Keduanya terhubung melalui kontrak dan mekanisme integrasi yang terkontrol.',
+    sso: '<b>Alur login / SSO:</b> Pengguna mengautentikasi diri melalui LiNo Identity. Session broker dan layanan identitas menyediakan konteks sesi yang sah untuk LiNo AI maupun LiNo Mobile. Setiap aplikasi tetap memvalidasi sesi dan hak akses; kredensial tidak dibawa di Intent navigasi.',
+    'ai-mobile': '<b>Alur AI ke Mobile:</b> LiNo AI menentukan capability yang dibutuhkan, lalu App Bridge mengirim permintaan dengan opaque <code>handoff_id</code>. LiNo Mobile menerima Intent, memvalidasi konteks ke backend, dan membuka screen melalui capability registry / internal router.',
+    result: '<b>Alur pengembalian hasil:</b> Setelah pengguna menyelesaikan atau membatalkan aktivitas di LiNo Mobile, aplikasi mengembalikan hasil alur melalui Activity Result / callback. LiNo AI melanjutkan konteks dengan membaca status domain dari backend. Callback bukan sumber kebenaran transaksi.'
+  };
+  document.querySelectorAll('[data-flow-choice]').forEach(button => {
+    button.addEventListener('click', () => {
+      const flow = button.dataset.flowChoice;
+      appMap.dataset.flow = flow;
+      document.querySelectorAll('[data-flow-choice]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      if (flowDescription) flowDescription.innerHTML = flowCopy[flow] || flowCopy.overview;
+    });
+  });
+
+  search.addEventListener('input', renderSearch);
+  search.addEventListener('focus', renderSearch);
+  document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) results.classList.remove('show'); });
+  search.addEventListener('keydown', e => { if (e.key === 'Escape') {results.classList.remove('show');search.blur();} if (e.key === 'Enter') {const first=results.querySelector('a'); if(first) first.click();} });
+})();
+</script>
+</body>
+</html>
